@@ -1,0 +1,21 @@
+{
+  "name": "react-native-auto-send-sms-dual-sim",
+  "version": "0.1.0",
+  "summary": "A react native library to automate send sms in dual sim phones",
+  "homepage": "https://github.com/sarsony1//react-native-auto-send-sms-dual-sim#readme",
+  "license": "MIT",
+  "authors": "Vadlamudi Sony Venkatesh <sony.venkatesh97@gmail.com> (https://github.com/sarsony1/)",
+  "platforms": {
+    "ios": "10.0"
+  },
+  "source": {
+    "git": "https://github.com/sarsony1//react-native-auto-send-sms-dual-sim.git",
+    "tag": "0.1.0"
+  },
+  "source_files": "ios/**/*.{h,m,mm,swift}",
+  "dependencies": {
+    "React-Core": [
+
+    ]
+  }
+}
