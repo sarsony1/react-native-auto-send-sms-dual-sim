@@ -1,5 +1,29 @@
-import { NativeModules } from 'react-native';
+import { NativeModules, Platform } from 'react-native';
 
-const {AutoSendSmsDualSim} = NativeModules ;
+const { AutoSendSmsDualSim } = NativeModules;
 
-export default AutoSendSmsDualSim;
+export const sendSmsFromSubscriptionIndex = (
+  simIndex,
+  destAddress,
+  msgBody
+) => {
+  if (Platform.OS === 'android') {
+    AutoSendSmsDualSim.sendSmsFromSubscriptionIndex(
+      simIndex,
+      destAddress,
+      msgBody
+    );
+  }
+};
+
+export const sendSmsFromDefault = (destAddress, msgBody) => {
+  if (Platform.OS === 'android') {
+    AutoSendSmsDualSim.sendSmsFromDefault(destAddress, msgBody);
+  }
+};
+
+export const prepareSendSMS = () => {
+  if (Platform.OS === 'android') {
+    AutoSendSmsDualSim.prepareSendSMS();
+  }
+};
