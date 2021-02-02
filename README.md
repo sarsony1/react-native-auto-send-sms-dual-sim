@@ -12,10 +12,6 @@ npm install react-native-auto-send-sms-dual-sim
 
 ```js
 import AutoSendSmsDualSim from "react-native-auto-send-sms-dual-sim";
-
-// ...
-
-const result = await AutoSendSmsDualSim.multiply(3, 7);
 ```
 
 ## Contributing
