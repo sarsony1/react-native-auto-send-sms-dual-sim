@@ -22,6 +22,15 @@ export const sendSmsFromSubscriptionIndex = async (
   }
 };
 
+export const getPhoneNumberList = async (callback) => {
+  const setUpStatus = await prepareSendSMS(callback);
+  if (!setUpStatus) {
+    return;
+  } else {
+    return AutoSendSmsDualSim.getPhoneNumberList();
+  }
+};
+
 const hasPhoneStateReadPermission = async () => {
   if (Platform.Version < 22) {
     return true;

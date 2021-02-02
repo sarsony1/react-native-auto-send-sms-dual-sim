@@ -43,6 +43,17 @@ class AutoSendSmsDualSimModule(private val reactContext: ReactApplicationContext
         sendSMS(destAddress, msgBody, smsManager, successCb, errorCb);
     }
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
+    @ReactMethod
+    fun getActivePhoneNumberList(): WritableArray{
+        val writableArray = WritableNativeArray()
+        for(subInfo in subscriptionInfoList){
+            writableArray.pushString(subInfo.number)
+        }
+
+        return writableArray
+    }
+
     private fun sendCallback(errorMsg: String, status: Boolean){
         if(status){
             mSuccessCb?.invoke(errorMsg)
