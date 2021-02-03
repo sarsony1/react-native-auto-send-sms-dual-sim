@@ -10,11 +10,14 @@ import android.os.Build
 import android.telephony.SmsManager
 import android.telephony.SubscriptionInfo
 import android.telephony.SubscriptionManager
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule.RCTDeviceEventEmitter
+import org.json.JSONObject
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class AutoSendSmsDualSimModule(private val reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
@@ -25,6 +28,8 @@ class AutoSendSmsDualSimModule(private val reactContext: ReactApplicationContext
 
     private val SENT = "SMS+SENT"
     private val DELIVERED = "SMS_DELIVERED"
+
+    @get:[ReactMethod JvmName("isSimChooserNeeded")]
     var isSimChooserNeeded: Boolean = false
     lateinit var subscriptionManager: SubscriptionManager
     private lateinit var subscriptionInfoList: List<SubscriptionInfo>
@@ -32,6 +37,7 @@ class AutoSendSmsDualSimModule(private val reactContext: ReactApplicationContext
     private var deliveredPI: PendingIntent = PendingIntent.getBroadcast(reactContext, 0, Intent(DELIVERED), 0)
     private var mSuccessCb: Callback? = null
     private var mErrorCb: Callback? = null
+    private var TAG = "DEBUG_CHECK"
 
     @ReactMethod
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
@@ -45,13 +51,12 @@ class AutoSendSmsDualSimModule(private val reactContext: ReactApplicationContext
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
     @ReactMethod
-    fun getActivePhoneNumberList(): WritableArray{
-        val writableArray = WritableNativeArray()
-        for(subInfo in subscriptionInfoList){
-            writableArray.pushString(subInfo.number)
+    fun getActivePhoneNumberList(callback: Callback){
+        val json = JSONObject()
+        subscriptionInfoList.forEachIndexed() { index, element ->
+            json.put("SIM_$index", element.number)
         }
-
-        return writableArray
+        callback.invoke(json.toString())
     }
 
     private fun sendCallback(errorMsg: String, status: Boolean){
