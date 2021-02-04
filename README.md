@@ -1,4 +1,4 @@
-# react-native-auto-send-sms-dual-sim
+# react-native-auto-send-sms-dual-sim ( IN PROGRESS. WILL NOT BE WORKING YET )
 
 A react native library to that will enable users to send SMS from custom SIM from React native.
 Hasn't published to npm yet.
