@@ -8,6 +8,12 @@ Hasn't published to npm yet.
 ```sh
 npm install react-native-auto-send-sms-dual-sim
 ```
+Android Permissions that are needed to be added in AndroidManifest.xml
+
+```sh
+<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+<uses-permission android:name="android.permission.SEND_SMS"/>
+```
 
 ## Usage
 
@@ -62,11 +68,6 @@ AutoSendSmsDualSim.getPhoneNumberList(
         );
 
 ```
-
-Android Permissions Needed
-
-<uses-permission android:name="android.permission.READ_PHONE_STATE" />
-<uses-permission android:name="android.permission.SEND_SMS"/>
 
 ## Contributing
 
