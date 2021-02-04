@@ -2,15 +2,14 @@ import { NativeModules, Platform, PermissionsAndroid } from 'react-native';
 
 const { AutoSendSmsDualSim } = NativeModules;
 
-export const sendSmsFromSlotIndex = (
+export const sendSmsFromSlotIndex = async (
   slotIndex: number | null,
   destAddress: string,
   msgBody: string,
   callback: CallableFunction
 ) => {
-  const hasSmsAccess = requestReadSMSPermission();
+  const hasSmsAccess = await requestReadSMSPermission();
   if (!hasSmsAccess) return;
-  console.log('Have permission and ready to go');
   AutoSendSmsDualSim.sendSmsFromSlotIndex(
     slotIndex,
     destAddress,
@@ -76,13 +75,17 @@ const hasSMSPermission = async () => {
   const hasSendSmsPermission = await PermissionsAndroid.check(
     PermissionsAndroid.PERMISSIONS.SEND_SMS
   );
+
   return hasSendSmsPermission;
 };
 
 export async function requestReadSMSPermission() {
   if (Platform.OS === 'android') {
     const hasPermission = await hasSMSPermission();
-    if (hasPermission) return true;
+    if (hasPermission) {
+      console.log('Already has Send SMS Permission');
+      return true;
+    }
     const status = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.SEND_SMS,
       {
@@ -95,13 +98,13 @@ export async function requestReadSMSPermission() {
     );
     if (status === PermissionsAndroid.RESULTS.GRANTED) return true;
     if (status === PermissionsAndroid.RESULTS.DENIED) {
-      console.log('Read Sms permission denied by user.', status);
+      console.log('Send Sms permission denied by user.', status);
     } else if (status === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
-      console.log('Read Sms permission revoked by user.', status);
+      console.log('Send Sms permission revoked by user.', status);
     }
     return false;
   }
-  return true;
+  return false;
 }
 
 export const prepareSendSMS = async (callback: CallableFunction) => {

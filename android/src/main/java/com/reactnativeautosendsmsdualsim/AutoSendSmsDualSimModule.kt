@@ -43,10 +43,10 @@ class AutoSendSmsDualSimModule(private val reactContext: ReactApplicationContext
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
     fun sendSmsFromSlotIndex(simIndex: Int?, destAddress: String, msgBody: String, successCb: Callback, errorCb: Callback){
         var smsManager = SmsManager.getDefault();
-        if( simIndex != null &&  (simIndex == 1 || simIndex == 2)){
-            smsManager = SmsManager.getSmsManagerForSubscriptionId(subscriptionInfoList[simIndex -1].subscriptionId)
+        if( simIndex != null &&  (simIndex == 0 || simIndex == 1)){
+            smsManager = SmsManager.getSmsManagerForSubscriptionId(subscriptionInfoList[simIndex].subscriptionId)
         }
-        sendSMS(destAddress, msgBody, smsManager, successCb, errorCb);
+        sendSMS(destAddress, msgBody, smsManager, successCb, errorCb)
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
@@ -99,6 +99,7 @@ class AutoSendSmsDualSimModule(private val reactContext: ReactApplicationContext
                 }
             }
         }, IntentFilter(DELIVERED))
+
         val parts: ArrayList<String> = smsManager.divideMessage(msgBody)
 
         for (i in parts.indices) {
@@ -106,12 +107,7 @@ class AutoSendSmsDualSimModule(private val reactContext: ReactApplicationContext
             deliveredPendingIntents.add(i, deliveredPI)
         }
         smsManager.sendMultipartTextMessage(destAddress, null, parts, sentPendingIntents, deliveredPendingIntents)
-
-
-        val values = ContentValues()
-        values.put("address", destAddress)
-        values.put("body", msgBody)
-        reactContext.contentResolver.insert(Uri.parse("content://sms/sent"), values)
+        sendCallback("Message Send multi ", true)
     }
 
     @ReactMethod

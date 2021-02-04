@@ -58,8 +58,6 @@ export default function App() {
   }
 
   const renderListItem = ({ item, index }: RenderProps) => {
-    console.log('Hello there');
-    console.log(`${item}: ${index}`);
     return (
       <TouchableOpacity
         onPress={() => {
@@ -71,6 +69,7 @@ export default function App() {
             callback
           );
         }}
+        style={styles.listItem}
       >
         <Text>{item}</Text>
       </TouchableOpacity>
@@ -103,7 +102,6 @@ export default function App() {
         <Dialog visible={open} onDismiss={() => setOpen(false)}>
           <Dialog.Title>Choose the registered number</Dialog.Title>
           <Dialog.Content>
-            <Text>Content goes here</Text>
             <FlatList
               data={phoneNumberList}
               renderItem={renderListItem}
@@ -124,6 +122,12 @@ const styles = StyleSheet.create({
   },
   box: {
     height: 60,
-    marginVertical: 20,
+    width: 200,
+    marginVertical: 10,
+  },
+  listItem: {
+    height: 30,
+    width: 150,
+    marginVertical: 5,
   },
 });
