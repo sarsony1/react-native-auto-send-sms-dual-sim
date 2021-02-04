@@ -1,19 +1,115 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 
-import { StyleSheet, View, Text } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  TextInput,
+  Button,
+  FlatList,
+  TouchableOpacity,
+  Text,
+} from 'react-native';
+import { Dialog, Portal } from 'react-native-paper';
 import AutoSendSmsDualSim from 'react-native-auto-send-sms-dual-sim';
 
-
 export default function App() {
-  const [result, setResult] = React.useState<number | undefined>();
+  const [number, setNumber] = useState('');
+  const [message, setMessage] = useState('');
+  const [phoneNumberList, setPhoneNumberList] = useState(['123', '134']);
+  const [open, setOpen] = useState(false);
 
-  React.useEffect(() => {
-    AutoSendSmsDualSim.multiply(3, 7).then(setResult);
-  }, []);
+  const callback = (status: string, msg: any) => {
+    console.log(status + ' ' + msg);
+  };
+
+  const handleButtonClick = async () => {
+    var hasRequiredPermissions = false;
+    const isSimChooserNeeded = await AutoSendSmsDualSim.isSimChooserNeeded(
+      (status: string) => {
+        if (status === 'Success') {
+          hasRequiredPermissions = true;
+        }
+      }
+    );
+    if (hasRequiredPermissions) {
+      if (isSimChooserNeeded) {
+        setOpen(true);
+        AutoSendSmsDualSim.getPhoneNumberList(
+          (phoneNumberJsonString: string) => {
+            const phoneNumberJson = JSON.parse(phoneNumberJsonString);
+            console.log(`${phoneNumberJson.SIM_0} : ${phoneNumberJson.SIM_1}`);
+            setPhoneNumberList([phoneNumberJson.SIM_0, phoneNumberJson.SIM_1]);
+          }
+        );
+      } else {
+        AutoSendSmsDualSim.sendSmsFromSlotIndex(
+          null,
+          number,
+          message,
+          callback
+        );
+      }
+    }
+  };
+
+  interface RenderProps {
+    item: string;
+    index: number;
+  }
+
+  const renderListItem = ({ item, index }: RenderProps) => {
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          setOpen(false);
+          AutoSendSmsDualSim.sendSmsFromSlotIndex(
+            index,
+            number,
+            message,
+            callback
+          );
+        }}
+        style={styles.listItem}
+      >
+        <Text>{item}</Text>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <View style={styles.container}>
-      <Text>Result: {result}</Text>
+      <TextInput
+        style={styles.box}
+        onChangeText={(text) => setNumber(text)}
+        value={number}
+        placeholder="Enter Number Here"
+      />
+      <TextInput
+        style={styles.box}
+        onChangeText={(text) => setMessage(text)}
+        value={message}
+        placeholder="Enter message body here"
+      />
+      <View style={styles.box}>
+        <Button
+          onPress={handleButtonClick}
+          title="Send SMS"
+          color="#841584"
+          accessibilityLabel="Learn more about this purple button"
+        />
+      </View>
+      <Portal>
+        <Dialog visible={open} onDismiss={() => setOpen(false)}>
+          <Dialog.Title>Choose the registered number</Dialog.Title>
+          <Dialog.Content>
+            <FlatList
+              data={phoneNumberList}
+              renderItem={renderListItem}
+              keyExtractor={(_item: string, index: number) => index.toString()}
+            />
+          </Dialog.Content>
+        </Dialog>
+      </Portal>
     </View>
   );
 }
@@ -25,8 +121,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   box: {
-    width: 60,
     height: 60,
-    marginVertical: 20,
+    width: 200,
+    marginVertical: 10,
+  },
+  listItem: {
+    height: 30,
+    width: 150,
+    marginVertical: 5,
   },
 });

@@ -1,9 +1,3 @@
-import { NativeModules } from 'react-native';
+import * as AutoSendSmsDualSim from '../AutoSendSMSDualSim';
 
-type AutoSendSmsDualSimType = {
-  multiply(a: number, b: number): Promise<number>;
-};
-
-const { AutoSendSmsDualSim } = NativeModules;
-
-export default AutoSendSmsDualSim as AutoSendSmsDualSimType;
+export default AutoSendSmsDualSim;
